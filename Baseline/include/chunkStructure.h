@@ -85,14 +85,14 @@ typedef struct {
 typedef struct {
     int messageType;
     uint32_t clientID;
-    uint32_t dataSize;
-    uint32_t currentItemNum;
+    uint32_t dataSize; // ? 发送的总数
+    uint32_t currentItemNum; // ? 当前消息携带数
 } NetworkHead_t;
 
 typedef struct {
     NetworkHead_t* header;
-    uint8_t* sendBuffer;
-    uint8_t* dataBuffer;
+    uint8_t* sendBuffer; // ?
+    uint8_t* dataBuffer; // ?
 } SendMsgBuffer_t;
 
 typedef struct {
