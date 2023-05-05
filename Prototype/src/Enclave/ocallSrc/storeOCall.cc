@@ -173,6 +173,7 @@ void Ocall_InitWriteSealedFile(bool* ret, const char* sealedFileName) {
         return ;
     }
 
+    // 以写入模式打开并覆盖其中的内容（如果文件存在的话），同时以二进制模式打开文件，使其可以读写任何类型的数据
     outSealedFile_.open(sealedFileName, ios_base::trunc | ios_base::binary);
     if (!outSealedFile_.is_open()) {
         tool::Logging(myName_.c_str(), "cannot open the sealed file.\n");

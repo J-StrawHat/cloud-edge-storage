@@ -22,7 +22,7 @@ EnclaveIndex::EnclaveIndex(AbsDatabase* indexStore, int indexType,
     sgx_enclave_id_t eidSGX) : AbsIndex(indexStore) {
     // import the enclave id
     eidSGX_ = eidSGX;
-    Ecall_Init_Upload(eidSGX_, indexType);
+    Ecall_Init_Upload(eidSGX_, indexType); // ? 如何调用对应类的？
     tool::Logging(myName_.c_str(), "init the EnclaveIndex.\n");
 }
 
