@@ -24,10 +24,10 @@ using namespace std;
 class AbsIndex {
     protected:
         // the pointer to the abs database
-        AbsDatabase* indexStore_;
+        AbsDatabase* indexStore_; // IN_MEMORY 数据库，本身能持久化存储
 
         // for storageCore
-        StorageCore* storageCoreObj_;
+        StorageCore* storageCoreObj_; // 存 filerecipe，暂不考虑
 
         // for statistic
         uint64_t totalRecvDataSize_ = 0;

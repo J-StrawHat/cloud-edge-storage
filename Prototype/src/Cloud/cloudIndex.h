@@ -8,6 +8,70 @@
  * @copyright Copyright (c) 2021
  * 
  */
+
+typedef struct {
+    uint8_t chunkFp[CHUNK_HASH_SIZE];
+    char containerID[CONTAINER_ID_LENGTH]; // 我们在 container 里记录了 offset + length
+    // RecipeEntry_t address; // containerID + offset + length
+} FpIdx_t; // <- BinValue_t;
+
+/* Prototype/include/enclaveIndex.h */
+#ifndef ENCLAVE_SIMPLE_H
+#define ENCLAVE_SIMPLE_H
+
+#include "absIndex.h"
+
+#include "sgx_urts.h"
+#include "sgx_capable.h"
+#include "../src/Enclave/include/storeOCall.h"
+#include "../build/src/Enclave/storeEnclave_u.h"
+
+class CloudIndex : public AbsIndex {
+    private:
+        string myName_ = "CloudIndex";
+        // the variable to record the enclave information
+        sgx_enclave_id_t eidSGX_;
+    public:
+        /**
+         * @brief Construct a new Enclave Simple Index object
+         * 数据库本身实现了 从文件读写 fp2chunk.
+         * @param indexStore the reference to the index store
+         * @param indexType the type of index
+         * @param eidSGX the enclave id
+         */
+        CloudIndex(AbsDatabase* indexStore, int indexType, sgx_enclave_id_t eidSGX);
+
+        /**
+         * @brief Destroy the Enclave Simple Index object
+         * 
+         */
+        ~CloudIndex();
+
+        /**
+         * @brief process one batch 
+         * 
+         * @param recvChunkBuf the recv chunk buffer
+         * @param upOutSGX the structure to store the enclave related variable
+         */
+        void ProcessOneBatch(SendMsgBuffer_t* recvChunkBuf, UpOutSGX_t* upOutSGX);
+
+        /**
+         * @brief process the tail segment
+         * 
+         * @param upOutSGX the structure to store the enclave related variable
+         */
+        void ProcessTailBatch(UpOutSGX_t* upOutSGX);
+};
+#endif
+
+
+
+
+
+
+
+
+/* Prototype/src/Enclave/include/ecallInEnclave.h */
 #ifndef CLOUD_BASE_LINE
 #define CLOUD_BASE_LINE
 #define ENABLE_SEALING 1 // 是否使用文件存储
@@ -19,12 +83,7 @@
 
 #define SEALED_BASELINE_INDEX_PATH "cloud-baseline-seal-index" // "baseline-seal-index"
 
-typedef struct {
-    uint8_t chunkFp[CHUNK_HASH_SIZE];
-    char containerID[CONTAINER_ID_LENGTH]; // 我们在 container 里记录了 offset + length
-    // RecipeEntry_t address; // containerID + offset + length
-} FpIdx_t; // <- BinValue_t;
-
+// TODO 考虑 Prototype/include/enclaveIndex.h 继承 AbsIndex
 class CloudIndex : public CLoudBase {
     private:
         string myName_ = "CloudIndex";

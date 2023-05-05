@@ -23,18 +23,21 @@ CloudOptThead::CloudOptThead(SSLConnection* dataSecureChannel,
     AbsDatabase* fp2ChunkDB, sgx_enclave_id_t eidSGX, int indexType) {
     dataSecureChannel_ = dataSecureChannel;
     fp2ChunkDB_ = fp2ChunkDB;
-    eidSGX_ = eidSGX;
+    eidSGX_ = eidSGX; // TODO 待清除
     indexType_ = indexType;        
 
     // init the upload
     dataWriterObj_ = new DataWriter();
     storageCoreObj_ = new StorageCore();
-    absIndexObj_ = new EnclaveIndex(fp2ChunkDB_, indexType_, eidSGX_);
+    // TODO CloudIndex 替代 EnclaveIndex
+    // absIndexObj_ = new EnclaveIndex(fp2ChunkDB_, indexType_, eidSGX_); // 使用 CloudIndex init
+    absIndexObj_ = new CloudIndex(fp2ChunkDB_, indexType_);
     absIndexObj_->SetStorageCoreObj(storageCoreObj_);
+    // TODO 不使用 eidSGX_ 定义 DataReceiver
     dataReceiverObj_ = new DataReceiver(absIndexObj_, dataSecureChannel_, eidSGX_);
     dataReceiverObj_->SetStorageCoreObj(storageCoreObj_);
 
-    // init the restore
+    // init the restore // TODO 恢复暂不考虑
     recvDecoderObj_ = new EnclaveRecvDecoder(dataSecureChannel_, 
         eidSGX_);
 
@@ -78,7 +81,7 @@ CloudOptThead::~CloudOptThead() {
         delete it.second;
     }
 
-    // destroy the variables inside the enclave
+    // destroy the variables inside the enclave  // TODO 待清除
     Ecall_Destroy_Restore(eidSGX_);
     Ecall_Destroy_Upload(eidSGX_);
     logFile_.close();
@@ -197,7 +200,7 @@ void CloudOptThead::Run(SSL* clientSSL) {
     struct timeval eTime;
     double keyExchangeTime = 0;
     gettimeofday(&sTime, NULL);
-    Ecall_Session_Key_Exchange(eidSGX_, recvBuf.dataBuffer, clientID);
+    Ecall_Session_Key_Exchange(eidSGX_, recvBuf.dataBuffer, clientID); // ? // TODO 待清除
     gettimeofday(&eTime, NULL);
     keyExchangeTime = tool::GetTimeDiff(sTime, eTime);
 
@@ -280,7 +283,7 @@ void CloudOptThead::Run(SSL* clientSSL) {
             outClient = new ClientVar(clientID, clientSSL, UPLOAD_OPT, recipePath);
             Ecall_Init_Client(eidSGX_, clientID, indexType_, UPLOAD_OPT, 
                 recvBuf.dataBuffer + CHUNK_HASH_SIZE, 
-                &outClient->_upOutSGX.sgxClient);
+                &outClient->_upOutSGX.sgxClient);  // TODO 待清除
 
             thTmp = new boost::thread(attrs, boost::bind(&DataReceiver::Run, dataReceiverObj_,
                 outClient, &enclaveInfo));
@@ -308,7 +311,7 @@ void CloudOptThead::Run(SSL* clientSSL) {
             outClient = new ClientVar(clientID, clientSSL, DOWNLOAD_OPT, recipePath);
             Ecall_Init_Client(eidSGX_, clientID, indexType_, DOWNLOAD_OPT, 
                 recvBuf.dataBuffer + CHUNK_HASH_SIZE,
-                &outClient->_resOutSGX.sgxClient);
+                &outClient->_resOutSGX.sgxClient); // TODO 待清除
 
             thTmp = new boost::thread(attrs, boost::bind(&EnclaveRecvDecoder::Run, recvDecoderObj_,
                 outClient));
@@ -349,11 +352,11 @@ void CloudOptThead::Run(SSL* clientSSL) {
     // clean up client variables 
     switch (optType) {
         case UPLOAD_OPT: {
-            Ecall_Destroy_Client(eidSGX_, outClient->_upOutSGX.sgxClient);
+            Ecall_Destroy_Client(eidSGX_, outClient->_upOutSGX.sgxClient); // TODO 待清除
             break;
         }
         case DOWNLOAD_OPT: {
-            Ecall_Destroy_Client(eidSGX_, outClient->_resOutSGX.sgxClient);
+            Ecall_Destroy_Client(eidSGX_, outClient->_resOutSGX.sgxClient); // TODO 待清除
             break;
         }
         default: {

@@ -25,12 +25,14 @@
  * @brief Construct a new FingerPrint Index object
  * 
  */
-CloudIndex::CloudIndex() {
+CloudIndex::CloudIndex(AbsDatabase* indexStore, int indexType) : AbsIndex(indexStore) {
+    #ifdef CLOUD_BASE_LINE
     if (ENABLE_SEALING) {
         if (!this->LoadDedupIndex()) {
             Cloud::Logging(myName_.c_str(), "do not need to load the previous index.\n"); 
         } 
     }
+    #endif
     Cloud::Logging(myName_.c_str(), "init the CloudIndex.\n");
 }
 
@@ -39,9 +41,11 @@ CloudIndex::CloudIndex() {
  * 
  */
 CloudIndex::~CloudIndex() {
+    #ifdef CLOUD_BASE_LINE
     if (ENABLE_SEALING) {
         this->PersistDedupIndex();
     }
+    #endif
     Cloud::Logging(myName_.c_str(), "========CloudIndex Info========\n");
     Cloud::Logging(myName_.c_str(), "logical chunk num: %lu\n", _logicalChunkNum);
     Cloud::Logging(myName_.c_str(), "logical data size: %lu\n", _logicalDataSize);
@@ -51,7 +55,7 @@ CloudIndex::~CloudIndex() {
     Cloud::Logging(myName_.c_str(), "===================================\n");
 }
 
-
+#ifdef CLOUD_BASE_LINE
 /**
  * @brief persist the deduplication index to the disk
  * 
@@ -180,7 +184,7 @@ bool CloudIndex::LoadDedupIndex() {
     }
     return true;
 }
-
+#endif
 
 /**
  * @brief process one batch

@@ -68,22 +68,22 @@ void DataReceiver::Run(ClientVar* outClient, EnclaveInfo_t* enclaveInfo) {
         } else {
             gettimeofday(&sProcTime, NULL);
             switch (recvChunkBuf->header->messageType) {
-                case SERVER_UPLOAD_FP : { // 新增，服务器上传指纹，我们先返回指纹是否存在，然后才上传 chunk
+                case EDGE_UPLOAD_FP : { // 新增，服务器上传指纹，我们先返回指纹是否存在，然后才上传 chunk
                     // TODO 
-                    CloudIndex->ProcessOneBatch(recvChunkBuf, upOutSGX);
+                    absIndexObj_->ProcessOneBatch(recvChunkBuf);
                     break;
                 }
-                case SERVER_UPLOAD_FP_END : { // 服务器上传最后一批指纹
+                case EDGE_UPLOAD_FP_END : { // 服务器上传最后一批指纹
                     // TODO 
                     
                     break;
                 }
-                case CLIENT_UPLOAD_CHUNK: {
+                case EDGE_UPLOAD_CHUNK: {
                     absIndexObj_->ProcessOneBatch(recvChunkBuf, upOutSGX); // ? chunk 存 recvChunkBuf
                     batchNum_++;
                     break;
                 }
-                case CLIENT_UPLOAD_RECIPE_END: {
+                case EDGE_UPLOAD_RECIPE_END: {
                     // this is the end of one upload 
                     absIndexObj_->ProcessTailBatch(upOutSGX);
                     // finalize the file recipe

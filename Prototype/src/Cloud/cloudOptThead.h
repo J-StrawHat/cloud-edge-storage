@@ -43,7 +43,7 @@ class CloudOptThead {
 
         // for upload
         DataReceiver* dataReceiverObj_; // dataReceiverObj_ 和 absIndexObj_ 都使用 storageCoreObj_
-        AbsIndex* absIndexObj_; // ? new EnclaveIndex()
+        AbsIndex* absIndexObj_; // ? new EnclaveIndex() -> CloudIndex
         DataWriter* dataWriterObj_; // ?
         StorageCore* storageCoreObj_; // update the file recipe to the disk
 

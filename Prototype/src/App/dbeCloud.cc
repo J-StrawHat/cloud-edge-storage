@@ -124,8 +124,9 @@ int main(int argc, char* argv[]) {
     boost::thread* thTmp;
     boost::thread_attributes attrs;
     attrs.set_stack_size(THREAD_STACK_SIZE);
-    
-    fp2ChunkDB = dbFactory.CreateDatabase(IN_MEMORY, config.GetFp2ChunkDBName()); // ?
+
+    // 实际上，传来传去，不变的是 AbsIndex.AbsDatabase* indexStore_，这里是用 InMemoryDatabase
+    fp2ChunkDB = dbFactory.CreateDatabase(IN_MEMORY, config.GetFp2ChunkDBName()); // Prototype/src/Database/factoryDatabase.cc -> Prototype/src/Database/inMemoryDatabase.cc
     dataSecurityChannelObj = new SSLConnection(config.GetStorageServerIP(), 
         config.GetStoragePort(), IN_SERVERSIDE);
 
@@ -159,6 +160,8 @@ int main(int argc, char* argv[]) {
     // init 
     serverThreadObj = new CloudOptThead(dataSecurityChannelObj, fp2ChunkDB,
         eidSGX, indexType); // ? 用的一直是 AbsDatabase, 只不过索引类型不一样 Out-Enclave/In-Enclave/Similarity-based/Locality-based/Freq-based
+    // 对于 cloud eidSGX 不需要了
+    // -> Prototype/src/Cloud/cloudOptThread.cc
 
     /**
      * |---------------------------------------|
