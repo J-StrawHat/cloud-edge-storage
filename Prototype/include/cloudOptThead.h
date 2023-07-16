@@ -1,9 +1,9 @@
 /**
- * @file serverOptThead.h
- * @author Zuoru YANG (zryang@cse.cuhk.edu.hk)
- * @brief server main thead 
+ * @file cloudOptThead.h
+ * @author cyh, zwx
+ * @brief cloud main thead 
  * @version 0.1
- * @date 2021-07-11
+ * @date 2023-07-16
  * 
  * @copyright Copyright (c) 2021
  * 

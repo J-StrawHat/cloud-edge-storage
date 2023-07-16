@@ -1,25 +1,25 @@
 /**
- * @file serverOptThread.cc
- * @author Zuoru YANG (zryang@cse.cuhk.edu.hk)
- * @brief server main thread
+ * @file cloudOptThread.cc
+ * @author cyh, zwx
+ * @brief cloud main thread
  * @version 0.1
- * @date 2021-07-11
+ * @date 2023-07-16
  * 
  * @copyright Copyright (c) 2021
  * 
  */
 
-#include "../../include/serverOptThead.h"
+#include "../../include/cloudOptThead.h"
 
 /**
- * @brief Construct a new Server Opt Thread object
+ * @brief Construct a new Cloud Opt Thread object
  * 
  * @param dataSecureChannel data security communication channel
  * @param fp2ChunkDB the index
  * @param eidSGX sgx enclave id
  * @param indexType 
  */
-ServerOptThread::ServerOptThread(SSLConnection* dataSecureChannel, 
+CloudOptThread::CloudOptThread(SSLConnection* dataSecureChannel, 
     AbsDatabase* fp2ChunkDB, sgx_enclave_id_t eidSGX, int indexType) {
     dataSecureChannel_ = dataSecureChannel;
     fp2ChunkDB_ = fp2ChunkDB;
@@ -58,14 +58,14 @@ ServerOptThread::ServerOptThread(SSLConnection* dataSecureChannel,
         logFile_.open(logFileName_, ios_base::app | ios_base::out);
     }
 
-    tool::Logging(myName_.c_str(), "init the ServerOptThread.\n");
+    tool::Logging(myName_.c_str(), "init the CloudOptThread.\n");
 }   
 
 /**
- * @brief Destroy the Server Opt Thread object
+ * @brief Destroy the Cloud Opt Thread object
  * 
  */
-ServerOptThread::~ServerOptThread() {
+CloudOptThread::~CloudOptThread() {
     OutEnclave::Destroy();
     delete dataWriterObj_;
     delete storageCoreObj_;
@@ -83,7 +83,7 @@ ServerOptThread::~ServerOptThread() {
     Ecall_Destroy_Upload(eidSGX_);
     logFile_.close();
 
-    fprintf(stderr, "========ServerOptThread Info========\n");
+    fprintf(stderr, "=========CloudOptThread Info========\n");
     fprintf(stderr, "total recv upload requests: %lu\n", totalUploadReqNum_);
     fprintf(stderr, "total recv download requests: %lu\n", totalRestoreReqNum_);
     fprintf(stderr, "====================================\n");
@@ -94,7 +94,7 @@ ServerOptThread::~ServerOptThread() {
  * 
  * @param clientSSL the client ssl
  */
-void ServerOptThread::Run(SSL* clientSSL) {
+void CloudOptThread::Run(SSL* clientSSL) {
     boost::thread* thTmp;
     boost::thread_attributes attrs;
     attrs.set_stack_size(THREAD_STACK_SIZE);
@@ -410,7 +410,7 @@ void ServerOptThread::Run(SSL* clientSSL) {
  * @return true success
  * @return false fail
  */
-bool ServerOptThread::CheckFileStatus(string& fullRecipePath, int optType) {
+bool CloudOptThread::CheckFileStatus(string& fullRecipePath, int optType) {
     if (tool::FileExist(fullRecipePath)) {
         // the file exists
         switch (optType) {
