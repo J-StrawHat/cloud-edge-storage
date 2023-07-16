@@ -1,3 +1,10 @@
+## TODO
+
+- [ ] 关于cloud的config
+- [x] dbeCloud.cc （sgx相关代码暂时放着，避免影响整个系统的正常运行）
+- [x] cloudOptThread.h
+- [ ] cloudOptThread.cc
+
 ## 继承关系
 
 AbsIndex([.h](Prototype/include/absIndex.h)):
