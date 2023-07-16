@@ -247,7 +247,7 @@ void ServerOptThread::Run(SSL* clientSSL) {
             tool::Logging(myName_.c_str(), "send the file not exist reply error.\n");
             exit(EXIT_FAILURE);
         }
-
+        
         // wait the client to close the connection
         if (!dataSecureChannel_->ReceiveData(clientSSL, 
             recvBuf.sendBuffer, recvSize)) {
