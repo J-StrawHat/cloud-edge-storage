@@ -75,10 +75,21 @@ dataReceiverObj_
     - （若是多客户端）调用`dataWriterObj_->SaveToFile()`
     - （若是单客户端）将out-enclave的Client中的`_curContainer`放入到`_inputMQ`
     - 对`_curContainer`进行重置
+- `Ocall_GetReqContainers()`：
+    - 调用`enclaveRecvDecoderObj_->GetReqContainers(outClientPtr)`
 
 [inMemoryDatabase](Prototype/src/Database/inMemoryDatabase.cc)
 - `InsertBothBuffer()`：在`indexObj_`中插入新的键值对
 
 [storageCore](Prototype/src/Server/storageCore.cc)
 - `FinalizeRecipe()`：调用`fileRecipeHandler.write()`(ofstream类的函数)
+
+[enclaveRecvDecoder](Prototype/src/Server/enclaveRecvDecoder.cc)
+- `GetReqContainers()`：
+    - 从`outClient`中拿到`reqContainer`，并进一步获取`idBuffer`、`idNum`、`containerArray`
+    - 遍历每一个container id：
+        - 得到当前container的名字字符串
+        - 检查当前container是否在cache：调用`containerCache->ExistsInCache()`
+        - （若存在）从cache中拷贝至`containerArray[i]`
+        - （不存在）得到当前container在磁盘中的路径，通过文件流`containerIn`，读入到`containerArray[i]`，同时更新cache
 
